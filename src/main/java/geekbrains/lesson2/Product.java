@@ -1,4 +1,4 @@
-package geekbrains.firstapp;
+package geekbrains.lesson2;
 
 public class Product {
     private int id;
@@ -21,5 +21,18 @@ public class Product {
 
     public double getCost() {
         return cost;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public void setCost(double cost) {
+        this.cost = cost;
+    }
+
+    @Override
+    public String toString() {
+        return String.format("Product {id=%d, title=%s, cost=%.2f}", id, title, cost);
     }
 }
