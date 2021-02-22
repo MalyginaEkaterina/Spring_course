@@ -1,4 +1,4 @@
-package geekbrains.lesson3;
+package com.geekbrains.spring_boot;
 
 import org.springframework.stereotype.Component;
 
@@ -6,6 +6,7 @@ import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 @Component
 public class ProductRepository {
@@ -35,13 +36,8 @@ public class ProductRepository {
         products.add(product);
     }
 
-    public Product getById(int id) {
-        for (Product p : products) {
-            if (p.getId() == id) {
-                return p;
-            }
-        }
-        return null;
+    public Optional<Product> getById(int id) {
+        return products.stream().filter(p -> p.getId() == id).findFirst();
     }
 
     public ArrayList<Product> getByListId(List<Integer> ids) {

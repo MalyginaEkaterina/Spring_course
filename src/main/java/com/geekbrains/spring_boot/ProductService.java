@@ -1,11 +1,11 @@
-package geekbrains.lesson3;
-
-import org.springframework.stereotype.Component;
+package com.geekbrains.spring_boot;
+import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
-@Component
+@Service
 public class ProductService {
     private ProductRepository productRepository;
 
@@ -43,7 +43,7 @@ public class ProductService {
         return productRepository.getProducts();
     }
 
-    public Product getProduct(int id) {
+    public Optional<Product> getProduct(int id) {
         return productRepository.getById(id);
     }
 

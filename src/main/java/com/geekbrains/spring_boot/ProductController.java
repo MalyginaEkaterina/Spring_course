@@ -1,4 +1,4 @@
-package geekbrains.lesson3;
+package com.geekbrains.spring_boot;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -11,6 +11,18 @@ public class ProductController {
 
     public ProductController(ProductService productService) {
         this.productService = productService;
+    }
+
+    @GetMapping("/{id}")
+    public String getProductById(Model model, @PathVariable Integer id) {
+        model.addAttribute("product", productService.getProduct(id).orElseThrow(() -> new ProductNotFoundException(id)));
+        return "product";
+    }
+
+    @ExceptionHandler(ProductNotFoundException.class)
+    @ResponseBody
+    public String handleException(ProductNotFoundException e) {
+        return e.getMessage();
     }
 
     @GetMapping("/all")
