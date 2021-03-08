@@ -1,6 +1,9 @@
 package geekbrains.spring.lesson7;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -15,8 +18,40 @@ public class ProductService {
         return productRepository.findById(id).get();
     }
 
-    public List<Product> getAll() {
-        return productRepository.findAll();
+    public Page<Product> getAll(int page, int size) {
+        return productRepository.findAll(PageRequest.of(page, size));
+    }
+
+    public List<Product> getAllSorted(SortDirection sortCost, SortDirection sortTitle, Boolean costFirst) {
+        Sort sortByCost = null;
+        Sort sortByTitle = null;
+        if (sortCost != null) {
+            if (sortCost == SortDirection.ASC) {
+                sortByCost = Sort.by("cost");
+            } else {
+                sortByCost = Sort.by("cost").descending();
+            }
+        }
+
+        if (sortTitle != null) {
+            if (sortTitle == SortDirection.ASC) {
+                sortByTitle = Sort.by("title");
+            } else {
+                sortByTitle = Sort.by("title").descending();
+            }
+        }
+
+        if (sortByCost == null) {
+            return productRepository.findAll(sortByTitle);
+        } else if (sortByTitle == null) {
+            return productRepository.findAll(sortByCost);
+        } else {
+            if (costFirst) {
+                return productRepository.findAll(sortByCost.and(sortByTitle));
+            } else {
+                return productRepository.findAll(sortByTitle.and(sortByCost));
+            }
+        }
     }
 
     public Product add(Product product) {
