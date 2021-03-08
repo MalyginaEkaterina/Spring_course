@@ -1,7 +1,8 @@
 package geekbrains.spring.lesson7;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
+import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -13,8 +14,50 @@ public class ProductController {
     private ProductService productService;
 
     @GetMapping
-    public List<Product> getAll() {
-        return productService.getAll();
+    public List<Product> getAll(@RequestParam(defaultValue = "1") Integer page, @RequestParam(defaultValue = "10") Integer size) {
+        validatePagingParams(page, size);
+        Page<Product> productPage = productService.getAll(page - 1, size);
+        if (page > productPage.getTotalPages()) {
+            throw new IncorrectParamException("The total number of pages is " + productPage.getTotalPages());
+        }
+        return productPage.toList();
+    }
+
+    @GetMapping("/sort")
+    public List<Product> getAllSorted(@RequestParam(required = false) String sortCost,
+                                      @RequestParam(required = false) String sortTitle,
+                                      @RequestParam(required = false) Boolean costFirst) {
+        validateSortingParams(sortCost, sortTitle, costFirst);
+        try {
+            return productService.getAllSorted(sortCost != null ? SortDirection.valueOf(sortCost) : null,
+                    sortTitle != null ? SortDirection.valueOf(sortTitle) : null, costFirst);
+        } catch (IllegalArgumentException e) {
+            throw new IncorrectParamException(e.getMessage());
+        }
+    }
+
+    public void validateSortingParams(String sortCost, String sortTitle, Boolean costFirst) {
+        if (sortCost == null && sortTitle == null) {
+            throw new IncorrectParamException("The sort type must be specified!");
+        } else if (sortCost != null && sortTitle != null && costFirst == null) {
+            throw new IncorrectParamException("Sort priority must be specified!");
+        }
+    }
+
+    public void validatePagingParams(int page, int size) {
+        if (page < 1) {
+            throw new IncorrectParamException("Page index must not be less than one!");
+        }
+        if (size < 1) {
+            throw new IncorrectParamException("Page size must not be less than one!");
+        }
+    }
+
+    @ExceptionHandler(IncorrectParamException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseBody
+    public String handleException(IncorrectParamException e) {
+        return e.getMessage();
     }
 
     @GetMapping("/{id}")
