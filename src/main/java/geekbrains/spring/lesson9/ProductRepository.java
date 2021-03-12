@@ -1,4 +1,4 @@
-package geekbrains.spring.lesson7;
+package geekbrains.spring.lesson9;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -6,7 +6,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface ProductRepository extends JpaRepository<Product, Integer> {
+public interface ProductRepository extends JpaRepository<Product, Integer>{
 
     List<Product> findByCostGreaterThan (Double minCost);
     List<Product> findByCostLessThan (Double maxCost);
