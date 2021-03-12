@@ -1,4 +1,4 @@
-package geekbrains.spring.lesson7;
+package geekbrains.spring.lesson9;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -7,6 +7,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ProductService {
@@ -14,12 +15,12 @@ public class ProductService {
     @Autowired
     private ProductRepository productRepository;
 
-    public Product getById(Integer id) {
-        return productRepository.findById(id).get();
+    public Optional<ProductDto> getById(Integer id) {
+        return productRepository.findById(id).map(ProductDto::new);
     }
 
-    public Page<Product> getAll(int page, int size) {
-        return productRepository.findAll(PageRequest.of(page, size));
+    public Page<ProductDto> getAll(int page, int size) {
+        return productRepository.findAll(PageRequest.of(page, size)).map(ProductDto::new);
     }
 
     public List<Product> getAllSorted(SortDirection sortCost, SortDirection sortTitle, Boolean costFirst) {
@@ -54,8 +55,8 @@ public class ProductService {
         }
     }
 
-    public Product add(Product product) {
-        return productRepository.save(product);
+    public ProductDto addOrUpdate(ProductDto productDto) {
+        return new ProductDto(productRepository.save(new Product(productDto)));
     }
 
     public void delete(Integer id) {

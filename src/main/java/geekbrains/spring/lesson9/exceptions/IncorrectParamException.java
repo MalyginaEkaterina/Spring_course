@@ -1,4 +1,4 @@
-package geekbrains.spring.lesson7;
+package geekbrains.spring.lesson9.exceptions;
 
 public class IncorrectParamException extends RuntimeException{
     public IncorrectParamException(String msg) {

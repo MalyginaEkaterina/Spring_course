@@ -1,4 +1,4 @@
-package geekbrains.spring.lesson7;
+package geekbrains.spring.lesson9;
 
 public enum SortDirection {
     ASC, DESC

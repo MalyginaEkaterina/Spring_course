@@ -1,5 +1,7 @@
-package geekbrains.spring.lesson7;
+package geekbrains.spring.lesson9;
 
+import geekbrains.spring.lesson9.exceptions.IncorrectParamException;
+import geekbrains.spring.lesson9.exceptions.ProductNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -8,15 +10,15 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/products")
+@RequestMapping("/api/v1/products")
 public class ProductController {
     @Autowired
     private ProductService productService;
 
     @GetMapping
-    public List<Product> getAll(@RequestParam(defaultValue = "1") Integer page, @RequestParam(defaultValue = "10") Integer size) {
+    public List<ProductDto> getAll(@RequestParam(defaultValue = "1") Integer page, @RequestParam(defaultValue = "10") Integer size) {
         validatePagingParams(page, size);
-        Page<Product> productPage = productService.getAll(page - 1, size);
+        Page<ProductDto> productPage = productService.getAll(page - 1, size);
         if (page > productPage.getTotalPages()) {
             throw new IncorrectParamException("The total number of pages is " + productPage.getTotalPages());
         }
@@ -53,24 +55,24 @@ public class ProductController {
         }
     }
 
-    @ExceptionHandler(IncorrectParamException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ResponseBody
-    public String handleException(IncorrectParamException e) {
-        return e.getMessage();
-    }
-
     @GetMapping("/{id}")
-    public Product getById(@PathVariable Integer id) {
-        return productService.getById(id);
+    public ProductDto getById(@PathVariable Integer id) {
+        return productService.getById(id).orElseThrow(() -> new ProductNotFoundException("There is no product with id " + id));
     }
 
     @PostMapping
-    public Product add(@RequestBody Product product) {
-        return productService.add(product);
+    @ResponseStatus(HttpStatus.CREATED)
+    public ProductDto add(@RequestBody ProductDto product) {
+        product.setId(null);
+        return productService.addOrUpdate(product);
     }
 
-    @GetMapping("/delete/{id}")
+    @PutMapping
+    public ProductDto update(@RequestBody ProductDto product) {
+        return productService.addOrUpdate(product);
+    }
+
+    @DeleteMapping("/{id}")
     public void delete(@PathVariable Integer id) {
         productService.delete(id);
     }
