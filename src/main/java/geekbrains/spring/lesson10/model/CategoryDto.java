@@ -1,4 +1,4 @@
-package geekbrains.spring.lesson9;
+package geekbrains.spring.lesson10.model;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
