@@ -1,4 +1,4 @@
-package geekbrains.spring.lesson10.exceptions;
+package geekbrains.spring.lesson11.exceptions;
 
 import lombok.Data;
 

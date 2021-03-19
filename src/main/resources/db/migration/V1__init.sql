@@ -1,58 +1,46 @@
-CREATE TABLE `products` (
-  `id` int unsigned NOT NULL AUTO_INCREMENT,
-  `title` varchar(255) DEFAULT NULL,
-  `cost` float DEFAULT NULL,
-  `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=23 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
-INSERT INTO `spring_lesson9`.`products` (`title`, `cost`, `created_at`, `updated_at`) VALUES
-('one', '110', now(), now()),
-('two', '220', now(), now()),
-('three', '330', now(), now()),
-('four', '440', now(), now()),
-('five', '550', now(), now()),
-('six', '660', now(), now()),
-('seven', '770', now(), now()),
-('eight', '880', now(), now()),
-('nine', '99', now(), now()),
-('ten', '100', now(), now()),
-('eleven', '111', now(), now()),
-('twelve', '222', now(), now()),
-('thirteen', '133', now(), now()),
-('fourteen', '144', now(), now()),
-('fifteen', '155', now(), now()),
-('sixteen', '166', now(), now()),
-('seventeen', '177', now(), now()),
-('eighteen', '188', now(), now()),
-('nineteen', '199', now(), now()),
-('twenty', '200', now(), now());
-
-CREATE TABLE `spring_lesson9`.`categories` (
+CREATE TABLE `spring_lesson11`.`users` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
-  `name` VARCHAR(255) NOT NULL,
+  `username` VARCHAR(45) NOT NULL,
+  `password` VARCHAR(80) NOT NULL,
+  `score` INT NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`));
 
-INSERT INTO `spring_lesson9`.`categories` (`name`) VALUES
-('cat_1'),
-('cat_2'),
-('cat_3'),
-('cat_4'),
-('cat_5');
 
-CREATE TABLE `spring_lesson9`.`products_categories` (
-  `id_product` INT UNSIGNED NOT NULL,
-  `id_category` INT UNSIGNED NOT NULL,
-  PRIMARY KEY (`id_product`, `id_category`),
-  INDEX `fk_prod_cat_category_id_idx` (`id_category` ASC) VISIBLE,
-  CONSTRAINT `fk_prod_cat_product_id`
-    FOREIGN KEY (`id_product`)
-    REFERENCES `spring_lesson9`.`products` (`id`)
-    ON DELETE RESTRICT
-    ON UPDATE RESTRICT,
-  CONSTRAINT `fk_prod_cat_category_id`
-    FOREIGN KEY (`id_category`)
-    REFERENCES `spring_lesson9`.`categories` (`id`)
-    ON DELETE RESTRICT
-    ON UPDATE RESTRICT);
+CREATE TABLE `spring_lesson11`.`roles` (
+  `id` SMALLINT NOT NULL AUTO_INCREMENT,
+  `name` VARCHAR(45) NOT NULL,
+  PRIMARY KEY (`id`));
+
+CREATE TABLE `spring_lesson11`.`users_roles` (
+  `user_id` INT UNSIGNED NOT NULL,
+  `role_id` SMALLINT NOT NULL,
+  PRIMARY KEY (`user_id`, `role_id`),
+  INDEX `fk_users_roles_users_id_idx` (`role_id` ASC) VISIBLE,
+  CONSTRAINT `fk_users_roles_users_id`
+    FOREIGN KEY (`user_id`)
+    REFERENCES `spring_lesson11`.`users` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_users_roles_roles_id`
+    FOREIGN KEY (`role_id`)
+    REFERENCES `spring_lesson11`.`roles` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION);
+
+insert into roles (name)
+values
+('ROLE_USER');
+
+insert into users (username, password, score)
+values
+('user1', '$2a$04$Fx/SX9.BAvtPlMyIIqqFx.hLY2Xp8nnhpzvEEVINvVpwIPbA3v/.i', 100),
+('user2', '$2a$04$Fx/SX9.BAvtPlMyIIqqFx.hLY2Xp8nnhpzvEEVINvVpwIPbA3v/.i', 222),
+('user3', '$2a$04$Fx/SX9.BAvtPlMyIIqqFx.hLY2Xp8nnhpzvEEVINvVpwIPbA3v/.i', 333),
+('user4', '$2a$04$Fx/SX9.BAvtPlMyIIqqFx.hLY2Xp8nnhpzvEEVINvVpwIPbA3v/.i', 444);
+
+insert into users_roles (user_id, role_id)
+values
+(1, 1),
+(2, 1),
+(3, 1),
+(4, 1);
