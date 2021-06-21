@@ -1,0 +1,47 @@
+package com.geekbrains.spring_boot;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
+
+@Controller
+@RequestMapping("/products")
+public class ProductController {
+    private ProductService productService;
+
+    public ProductController(ProductService productService) {
+        this.productService = productService;
+    }
+
+    @GetMapping("/{id}")
+    public String getProductById(Model model, @PathVariable Integer id) {
+        model.addAttribute("product", productService.getProduct(id).orElseThrow(() -> new ProductNotFoundException(id)));
+        return "product";
+    }
+
+    @ExceptionHandler(ProductNotFoundException.class)
+    @ResponseBody
+    public String handleException(ProductNotFoundException e) {
+        return e.getMessage();
+    }
+
+    @GetMapping("/all")
+    public String getAllProducts(Model model) {
+        model.addAttribute("allProducts", productService.getAllProducts());
+        return "products";
+    }
+
+    @GetMapping("/remove/{id}")
+    public String deleteProductById(@PathVariable Integer id) {
+        productService.deleteProduct(id);
+        return "redirect:/products/all";
+    }
+
+    @PostMapping("/add")
+//    public String addNewProduct(@RequestParam Integer id, @RequestParam String title, @RequestParam Double cost) {
+    public String addNewProduct(@ModelAttribute Product product) {
+        productService.addProduct(product);
+        return "redirect:/products/all";
+    }
+
+}
